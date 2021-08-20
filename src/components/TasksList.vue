@@ -1,8 +1,13 @@
 <template>
+  <h3 class="mt-3">Simple Time Tracking App with Vue 3</h3>
   <div class="tasks-container">
     <div class="create-new-task">
-      <InputText v-model="newTask.name" @keyup.enter="createNewTask" />
-      <ButtonCreateTask @click="createNewTask"/>
+      <div class="input-group create-new-task-group mt-3 mb-3">
+        <InputText v-model="newTask.name" @keyup.enter="createNewTask" />
+        <div class="input-group-append">
+          <ButtonCreateTask @click="createNewTask"/>
+        </div>
+      </div>
     </div>
     <div class="task-list">
       <Task v-for="task in tasksList" :key="task.id" :task="task" @remove:task="deleteTaskFromList($event)" />
@@ -70,18 +75,23 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+
+.create-new-task-group {
+       width: 50%;
+       left: 50%;
+       transform: translateX(-50%);
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+@media (max-width: 767px) {
+   .create-new-task-group {
+     width: 75%;
+   }
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+
+@media (max-width: 480px) {
+  .create-new-task-group {
+    width: 90%;
+  }
 }
-a {
-  color: #42b983;
-}
+
 </style>

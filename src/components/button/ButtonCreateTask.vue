@@ -1,5 +1,5 @@
 <template>
-    <button>Create New Task</button>
+    <button class="btn btn-success">Create New Task</button>
 </template>
 
 <script>
