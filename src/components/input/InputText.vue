@@ -6,6 +6,7 @@
       class="form-control create-new-task-input border border-success"
       placeholder="Enter a fancy task name"
       aria-label="Enter a fancy task name"
+      v-focus="true"
     />
 </template>
 
@@ -16,6 +17,15 @@ export default {
     modelValue: String,
   },
   emits: ["update:modelValue"],
+  directives: {
+      focus: {
+        mounted(element, binding) {
+          if (binding.value) {
+            element.focus();
+          }
+        }
+      }
+  }
 };
 </script>
 

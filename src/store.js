@@ -1,13 +1,16 @@
 import { reactive, computed } from 'vue'
 
+// keep the state object private so that the state can be shared across the diffrent components
 const state = reactive({
     storedTasksList: []
 });
 
 export const useStore = () => {
 
+    // getters
     const getTasksList = computed(() => state.storedTasksList);
 
+    // actions
     const addTask = (taskToAdd) => {
         state.storedTasksList.push(taskToAdd);
     }

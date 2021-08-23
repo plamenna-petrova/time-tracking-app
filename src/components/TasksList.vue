@@ -4,7 +4,9 @@
     class="tasks-total-time my-6"
     v-if="storedTasksList.length > 0 || totalTime > 0"
   >
-    <h4 class="d-inline text-white bg-dark p-2 mt-3">Total: {{ totalTimeDisplay }}</h4>
+    <h4 class="d-inline text-white bg-dark p-2 mt-3">
+      Total: {{ totalTimeDisplay }}
+    </h4>
   </div>
   <div v-else>
     <h4 class="d-inline text-white bg-dark p-2 mt-3">No time tracked</h4>
@@ -13,19 +15,23 @@
     <div class="input-group create-new-task-group mt-3 mb-3">
       <InputText v-model="newTask.name" @keyup.enter="createNewTask" />
       <div class="input-group-append">
-        <ButtonCreateTask @click="createNewTask" />
+        <ButtonCreateTask @click="createNewTask">
+          Create new Task
+        </ButtonCreateTask>
       </div>
     </div>
   </div>
   <div class="tasks-container">
     <div class="task-list">
-      <Task
-        v-for="task in storedTasksList"
-        :key="task.id"
-        :task="task"
-        @reduce:total="updateTotal($event)"
-        @update:total="updateTotal"
-      />
+      <transition-group name="task-list-transition">
+        <Task
+          v-for="task in storedTasksList"
+          :key="task.id"
+          :task="task"
+          @reduce:total="updateTotal($event)"
+          @update:total="updateTotal"
+        />
+      </transition-group>
     </div>
   </div>
 </template>
@@ -77,7 +83,7 @@ export default {
         alert("Please enter a name of the task");
         return;
       }
-    }
+    };
 
     const updateTotal = (minutes) => {
       if (minutes) {
@@ -85,7 +91,7 @@ export default {
       } else {
         totalTime.value++;
       }
-    }
+    };
 
     return {
       createNewTask,
@@ -94,7 +100,7 @@ export default {
       totalTime,
       totalTimeDisplay,
       updateTotal,
-    }
+    };
   },
 };
 </script>
