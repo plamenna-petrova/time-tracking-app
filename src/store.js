@@ -5,6 +5,8 @@ const state = reactive({
     storedTasksList: []
 });
 
+const localStorage = window.localStorage;
+
 export const useStore = () => {
 
     // getters
@@ -25,7 +27,7 @@ export const useStore = () => {
         });
     }
 
-    const setPausedTask = (taskId) => {
+    const setStoppedTask = (taskId) => {
         state.storedTasksList.forEach(task => {
             if (task.id === taskId) {
                 task.activeTask = false;
@@ -33,11 +35,30 @@ export const useStore = () => {
         });
     }
 
+    const writeStateToLocalStorage = () => {
+        localStorage.setItem('stored-state', JSON.stringify(state));
+    }
+
+    const readStateFromLocalStorage = () => {
+        const stringifiedStoredState = localStorage.getItem('stored-state');
+        const storedState = JSON.parse(stringifiedStoredState);
+
+        if (storedState) {
+            Object.keys(state).map(key => {
+                if (storedState[key]) {
+                    state[key] = storedState[key];
+                }
+            })
+        }
+    }
+
     return {
         addTask,
         removeTask,
         setActiveTask,
-        setPausedTask,
-        storedTasksList: getTasksList
+        setStoppedTask,
+        storedTasksList: getTasksList,
+        writeStateToLocalStorage,
+        readStateFromLocalStorage
     };
 }

@@ -5,7 +5,7 @@
         <div class="adjust-tracking">
             <transition-group name="buttons">
                 <ButtonStart v-if="!isActive" buttonTitle="Start Tracking" @click="startTracking" />
-                <ButtonStop v-else :isActive="isActive" buttonTitle="Stop Tracking" @click="pauseTracking" />
+                <ButtonStop v-else :isActive="isActive" buttonTitle="Stop Tracking" @click="stopTracking" />
             </transition-group>
         </div>
         <div class="remove-tracked-task">
@@ -37,7 +37,7 @@ export default {
     emits: ['reduce:total', 'update:total'],
     setup(props, { emit }) {
 
-        const { removeTask, setActiveTask, setPausedTask } = useStore();
+        const { removeTask, setActiveTask, setStoppedTask } = useStore();
 
         const isActive = computed(() => props.task.activeTask);
         const taskTotalTime = ref(0);
@@ -63,8 +63,8 @@ export default {
             setActiveTask(props.task.id);
         }
 
-        const pauseTracking = () => {
-            setPausedTask(props.task.id);
+        const stopTracking = () => {
+            setStoppedTask(props.task.id);
         }
 
         watch(isActive, () => {
@@ -81,7 +81,7 @@ export default {
         return {
             isActive,
             deleteTaskFromList,
-            pauseTracking,
+            stopTracking,
             startTracking,
             timeSpent
         }

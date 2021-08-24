@@ -1,11 +1,14 @@
 <template>
-  <h3 class="m-3">Simple Time Tracking App with Vue 3</h3>
+  <div class="d-flex flex-row justify-content-center m-4 tasks-list-header">
+    <h3 class="m-3 text-center">Simple Time Tracking App with Vue 3</h3>
+    <ButtonSave v-if="storedTasksList.length > 0"/>
+  </div>  
   <div
     class="tasks-total-time my-6"
     v-if="storedTasksList.length > 0 || totalTime > 0"
   >
-    <h4 class="d-inline text-white bg-dark p-2 mt-3">
-      Total: {{ totalTimeDisplay }}
+    <h4 class="d-inline text-dark bg-light bg-gradient border border-dark shadow  p-2 mt-3">
+      Time spent on listed tasks: {{ totalTimeDisplay }}
     </h4>
   </div>
   <div v-else>
@@ -37,18 +40,20 @@
 </template>
 
 <script>
-import ButtonCreateTask from "./button/ButtonCreateTask.vue";
-import InputText from "./input/InputText.vue";
+import ButtonCreateTask from "./button/ButtonCreateTask.vue"
+import ButtonSave from './button/ButtonSave.vue'
+import InputText from "./input/InputText.vue"
 import Task from "./Task.vue";
 
-import { computed, reactive, ref } from "vue";
-import { useStore } from "../store.js";
-import { formatTime } from "../utils.js";
+import { computed, reactive, ref } from "vue"
+import { useStore } from "../store.js"
+import { formatTime } from "../utils.js"
 
 export default {
   name: "TasksList",
   components: {
     ButtonCreateTask,
+    ButtonSave,
     InputText,
     Task,
   },
@@ -100,7 +105,7 @@ export default {
       totalTime,
       totalTimeDisplay,
       updateTotal,
-    };
+    }
   },
 };
 </script>

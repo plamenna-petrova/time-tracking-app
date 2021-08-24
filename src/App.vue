@@ -6,10 +6,20 @@
 <script>
 import TasksList from './components/TasksList.vue'
 
+import { onMounted } from 'vue'
+import { useStore } from './store.js'
+
 export default {
   name: 'App',
   components: {
     TasksList
+  },
+  setup() {
+    const { readStateFromLocalStorage } = useStore();
+
+    onMounted(() => {
+      setTimeout(readStateFromLocalStorage, 50);
+    })
   }
 }
 </script>
