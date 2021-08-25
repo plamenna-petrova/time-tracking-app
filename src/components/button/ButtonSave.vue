@@ -44,10 +44,10 @@ export default {
     const buttonState = reactive({
       enabled: true,
       text: "",
-    });
+    })
 
     const saveCurrentTasksList = () => {
-      writeStateToLocalStorage();
+      writeStateToLocalStorage('storedTasksList');
       buttonSave.value.blur();
 
       buttonState.enabled = false;

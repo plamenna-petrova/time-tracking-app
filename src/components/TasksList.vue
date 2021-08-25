@@ -24,7 +24,7 @@
       </div>
     </div>
   </div>
-  <div class="tasks-container">
+  <div class="tasks-container" v-if="storedTasksList.length > 0">
     <div class="task-list">
       <transition-group name="task-list-transition">
         <Task

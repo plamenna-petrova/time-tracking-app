@@ -2,6 +2,7 @@ import { reactive, computed } from 'vue'
 
 // keep the state object private so that the state can be shared across the diffrent components
 const state = reactive({
+    appTheme: '',
     storedTasksList: []
 });
 
@@ -11,6 +12,7 @@ export const useStore = () => {
 
     // getters
     const getTasksList = computed(() => state.storedTasksList);
+    const getAppTheme = computed(() => state.appTheme);
 
     // actions
     const addTask = (taskToAdd) => {
@@ -19,6 +21,8 @@ export const useStore = () => {
 
     const removeTask = (taskToRemove) => {
         state.storedTasksList = state.storedTasksList.filter(task => task.id !== taskToRemove.id);
+        // remove tasks on reload
+        writeStateToLocalStorage('storedTasksList');
     }
 
     const setActiveTask = (taskId) => {
@@ -35,21 +39,33 @@ export const useStore = () => {
         });
     }
 
-    const writeStateToLocalStorage = () => {
-        localStorage.setItem('stored-state', JSON.stringify(state));
+    const setAppTheme = (theme) => {
+        state.appTheme = theme;
+        writeStateToLocalStorage('appTheme');
     }
 
-    const readStateFromLocalStorage = () => {
-        const stringifiedStoredState = localStorage.getItem('stored-state');
-        const storedState = JSON.parse(stringifiedStoredState);
-
-        if (storedState) {
+    const writeStateToLocalStorage = (targetKey) => {
+        if (targetKey) {
+            const currentTarget = targetKey in state ? state[targetKey] : null;
+            if (currentTarget) {
+                localStorage.setItem(targetKey, JSON.stringify(currentTarget));
+            }
+        } else {
             Object.keys(state).map(key => {
-                if (storedState[key]) {
-                    state[key] = storedState[key];
-                }
+                localStorage.setItem(key, JSON.stringify(state[key]));
             })
         }
+    }
+
+    const readStateFromLocalStorage = (storedKeys) => {
+        storedKeys.forEach((storedKey) => {
+            const stringifiedStoredState = localStorage.getItem(storedKey);
+            const storedState = JSON.parse(stringifiedStoredState);
+
+            if (storedState && storedKey in state) {
+                state[storedKey] = storedState;
+            }
+        });
     }
 
     return {
@@ -57,8 +73,10 @@ export const useStore = () => {
         removeTask,
         setActiveTask,
         setStoppedTask,
-        storedTasksList: getTasksList,
+        setAppTheme,
+        readStateFromLocalStorage,
         writeStateToLocalStorage,
-        readStateFromLocalStorage
+        appTheme: getAppTheme,
+        storedTasksList: getTasksList
     };
 }
