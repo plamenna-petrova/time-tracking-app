@@ -3,14 +3,18 @@ import { useStore } from './store.js'
 const { appTheme } = useStore();
 
 export const formatTime = (input) => {
-    let minutes = input / 60;
 
+    let hours = input / 3600;
+    hours = hours.toString().split('.')[0];
+
+    let minutes = (input / 60) - (hours * 60);
     minutes = minutes.toString().split('.')[0];
 
-    let seconds = input - (minutes * 60);
+    let seconds = input - (minutes * 60) - (hours * 3600);
 
-    // formatted time
-    return `${(minutes < 10 ? '0' : '') + minutes}:${(seconds < 10 ? '0' : '') + seconds}`
+    return hours > 0 ?
+        `${(hours < 10 ? '0' : '') + hours}:${(minutes < 10 ? '0' : '') + minutes}:${(seconds < 10 ? '0' : '') + seconds}` :
+        `${(minutes < 10 ? '0' : '') + minutes}:${(seconds < 10 ? '0' : '') + seconds}`;
 }
 
 export const applyTheme = (theme) => {

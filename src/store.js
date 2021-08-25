@@ -2,7 +2,7 @@ import { reactive, computed } from 'vue'
 
 // keep the state object private so that the state can be shared across the diffrent components
 const state = reactive({
-    appTheme: '',
+    appTheme: 'light',
     storedTasksList: []
 });
 
