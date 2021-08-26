@@ -1,10 +1,18 @@
 <template>
     <div class="d-flex flex-row justify-content-center tasks-to-remove-list m-3 p-3" :class="{ 'active-task-container shadow' : isActive, 'shadow' : !isActive }">
-        <div class="p-2 bg-warning task-name flex flex-grow">
-            <ButtonEditTask class="click-outside-ignore" @click="toggleEdit" />
-            <div class="text-dark flex-grow" :class="{ 'font-weight-bold' : isActive }"> Task Name : {{ task.name }} </div>
-            <InputText v-model="taskToEdit.name" v-click-outside="toggleEdit" v-esc="toggleEdit" class="flex-grow" @keyup.enter="updateTask"/>
-            <ButtonSaveEdit @click="updateTask" />
+        <div class="d-flex flex-row bg-warning task-name">
+            <div class="p-2">
+                <ButtonEditTask class="click-outside-ignore" @click="toggleEdit" />
+            </div>
+            <div class="p-2">
+                <div class="text-dark flex-grow" :class="{ 'font-weight-bold' : isActive }"> Task Name : {{ task.name }} </div>
+            </div>
+            <div class="p-2">
+                <InputText v-model="taskToEdit.name" v-click-outside="toggleEdit" v-esc="toggleEdit" class="flex-grow" @keyup.enter="updateTask"/>
+            </div>
+            <div class="p-2">
+                <ButtonSaveEdit @click="updateTask" />
+            </div>    
         </div>
         <div class="p-2 bg-info rounded text-dark time-spent"> Time Spent : {{ timeSpent }}</div>
         <div class="adjust-tracking">
@@ -80,7 +88,7 @@ export default {
         }
 
         const toggleEdit = () => {
-            console.log(taskToEdit.editing);
+            // console.log(taskToEdit.editing);
             taskToEdit.editing = !taskToEdit.editing;
             return taskToEdit.editing ? taskToEdit.name = props.task.name : ''
         }
@@ -96,7 +104,7 @@ export default {
         const updateTask = () => {
             if (taskToEdit.name) {
                 editTaskName(props.task.id, taskToEdit.name);
-                toggleEdit();
+                // toggleEdit();
             } else {
                 alert('Please enter a task name!');
                 return
