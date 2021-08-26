@@ -1,6 +1,11 @@
 <template>
     <div class="d-flex flex-row justify-content-center tasks-to-remove-list m-3 p-3" :class="{ 'active-task-container shadow' : isActive, 'shadow' : !isActive }">
-        <div class="p-2 bg-warning text-dark task-name" :class="{ 'font-weight-bold' : isActive }"> Task Name : {{ task.name }} </div>
+        <div class="p-2 bg-warning task-name flex flex-grow">
+            <ButtonEditTask class="click-outside-ignore" @click="toggleEdit" />
+            <div class="text-dark flex-grow" :class="{ 'font-weight-bold' : isActive }"> Task Name : {{ task.name }} </div>
+            <InputText v-model="taskToEdit.name" v-click-outside="toggleEdit" v-esc="toggleEdit" class="flex-grow" @keyup.enter="updateTask"/>
+            <ButtonSaveEdit @click="updateTask" />
+        </div>
         <div class="p-2 bg-info rounded text-dark time-spent"> Time Spent : {{ timeSpent }}</div>
         <div class="adjust-tracking">
             <transition-group name="buttons">
@@ -19,20 +24,26 @@
 
 <script>
 
-import { computed, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useStore } from '../store.js'
 import { formatTime } from '../utils.js'
 
-import ButtonDeleteTask from './button/ButtonDeleteTask.vue';
-import ButtonStop from './button/ButtonStop.vue';
-import ButtonStart from './button/ButtonStart.vue';
+import ButtonDeleteTask from './button/ButtonDeleteTask.vue'
+import ButtonStop from './button/ButtonStop.vue'
+import ButtonStart from './button/ButtonStart.vue'
+import ButtonEditTask from './button/ButtonEditTask.vue'
+import ButtonSaveEdit from './button/ButtonSaveEdit.vue'
+import InputText from './input/InputText.vue'
 
 export default {
     name: 'Task',
     components: {
         ButtonDeleteTask,
         ButtonStart,
-        ButtonStop
+        ButtonStop,
+        ButtonEditTask,
+        ButtonSaveEdit,
+        InputText
     },
     props: {
         task: Object
@@ -40,9 +51,15 @@ export default {
     emits: ['reduce:total', 'update:total'],
     setup(props, { emit }) {
 
-        const { updateTaskTime, removeTask, setActiveTask, setStoppedTask } = useStore();
+        const { editTaskName, updateTaskTime, removeTask, setActiveTask, setStoppedTask } = useStore();
 
         const isActive = computed(() => props.task.activeTask);
+
+        const taskToEdit = reactive({
+            editing: false,
+            name: ''
+        });
+
         const taskTotalTime = ref(0);
         const timeSpent = computed(() => { return formatTime(taskTotalTime.value) });
 
@@ -51,9 +68,9 @@ export default {
         const deleteTaskFromList = (currentTask) => {
             if (taskTotalTime.value > 0) {
                 if (confirm('Do you really want to remove this task and the time spent on it?')) {
+                    clearInterval(increment);
                     removeTask(currentTask);
                     emit('reduce:total', taskTotalTime.value);
-                    clearInterval(increment);
                 } else { 
                     return
                 }
@@ -62,12 +79,28 @@ export default {
             }
         }
 
+        const toggleEdit = () => {
+            console.log(taskToEdit.editing);
+            taskToEdit.editing = !taskToEdit.editing;
+            return taskToEdit.editing ? taskToEdit.name = props.task.name : ''
+        }
+
         const startTracking = () => {
             setActiveTask(props.task.id);
         }
 
         const stopTracking = () => {
             setStoppedTask(props.task.id);
+        }
+
+        const updateTask = () => {
+            if (taskToEdit.name) {
+                editTaskName(props.task.id, taskToEdit.name);
+                toggleEdit();
+            } else {
+                alert('Please enter a task name!');
+                return
+            }
         }
 
         watch(isActive, () => {
@@ -92,10 +125,13 @@ export default {
 
         return {
             isActive,
+            toggleEdit,
+            taskToEdit,
             deleteTaskFromList,
             stopTracking,
             startTracking,
             timeSpent,
+            updateTask,
             updateTime
         }
     }

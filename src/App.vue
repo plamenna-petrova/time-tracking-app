@@ -19,10 +19,15 @@ export default {
     TasksList
   },
   setup() {
-    const { appTheme, readStateFromLocalStorage } = useStore();
+    const { appTheme, deactivateAll, readStateFromLocalStorage } = useStore();
 
     onMounted(() => {
+      const app = document.getElementById('app');
+      app.style.opacity = '1';
+      app.style.transition = 'opacity 1.5s ease';
       setTimeout(readStateFromLocalStorage(['appTheme', 'storedTasksList']), 50);
+      // in case someone has saved the task list with a running task
+      setTimeout(deactivateAll(), 100);
       setTimeout(applyTheme(appTheme.value), 150);
     })
 

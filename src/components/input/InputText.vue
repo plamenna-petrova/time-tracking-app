@@ -4,7 +4,7 @@
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
       class="form-control create-new-task-input border border-success"
-      placeholder="Enter a fancy task name"
+      :placeholder="placeholder"
       aria-label="Enter a fancy task name"
       v-focus="true"
     />
@@ -15,6 +15,7 @@ export default {
   name: "InputText",
   props: {
     modelValue: String,
+    placeholder: String
   },
   emits: ["update:modelValue"],
   directives: {

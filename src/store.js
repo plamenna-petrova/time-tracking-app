@@ -19,6 +19,20 @@ export const useStore = () => {
         state.storedTasksList.push(taskToAdd);
     }
 
+    const deactivateAll = () => {
+        state.storedTasksList.forEach(task => {
+            task.activeTask = false;
+        });
+    }
+
+    const editTaskName = (id, newTaskName) => {
+        state.storedTasksList.forEach(task => {
+            if (task.id === id) {
+                task.name = newTaskName;
+            }
+        });
+    }
+
     const updateTaskTime = (id, updatedTime) => {
         state.storedTasksList.forEach(task => {
             if (task.id === id) {
@@ -78,6 +92,8 @@ export const useStore = () => {
 
     return {
         addTask,
+        deactivateAll,
+        editTaskName,
         updateTaskTime,
         removeTask,
         setActiveTask,
