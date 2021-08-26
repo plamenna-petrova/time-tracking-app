@@ -61,8 +61,9 @@ export default {
     const { addTask, storedTasksList } = useStore();
 
     const newTask = reactive({
-      id: "",
-      name: "",
+      id: '',
+      name: '',
+      totalTimeSpent: '',
       activeTask: false,
     });
 
@@ -76,16 +77,16 @@ export default {
       if (newTask.name) {
         newTask.id = (Math.floor(Math.random() * 1000) + 1000)
           .toString()
-          .substring(1);
+          .substring(1);  
 
         addTask({ ...newTask });
 
-        alert("Task successfully created");
+        alert('Task successfully created');
 
-        newTask.id = "";
-        newTask.name = "";
+        newTask.id = '';
+        newTask.name = '';
       } else {
-        alert("Please enter a name of the task");
+        alert('Please enter a name of the task');
         return;
       }
     };

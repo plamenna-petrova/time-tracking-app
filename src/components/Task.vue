@@ -11,6 +11,9 @@
         <div class="remove-tracked-task">
             <ButtonDeleteTask buttonTitle="Delete Task" class="btn btn-danger" @click="deleteTaskFromList(task)" />
         </div>
+        <div class="update-time">
+            <button class="btn btn-primary" @click="updateTime">Save and update time</button>
+        </div>
     </div>
 </template>
 
@@ -37,7 +40,7 @@ export default {
     emits: ['reduce:total', 'update:total'],
     setup(props, { emit }) {
 
-        const { removeTask, setActiveTask, setStoppedTask } = useStore();
+        const { updateTaskTime, removeTask, setActiveTask, setStoppedTask } = useStore();
 
         const isActive = computed(() => props.task.activeTask);
         const taskTotalTime = ref(0);
@@ -78,12 +81,22 @@ export default {
             }
         })
 
+        const updateTime = () => {
+            if (props.task.name) {
+                updateTaskTime(props.task.id, timeSpent);
+            } else {
+                alert('Error');
+                return
+            }
+        }
+
         return {
             isActive,
             deleteTaskFromList,
             stopTracking,
             startTracking,
-            timeSpent
+            timeSpent,
+            updateTime
         }
     }
 }
@@ -110,7 +123,7 @@ export default {
         }
     }
 
-    .task-name, .time-spent, .adjust-tracking {
+    .task-name, .time-spent, .adjust-tracking, .remove-tracked-task {
         margin-right: 15px;
     }
 

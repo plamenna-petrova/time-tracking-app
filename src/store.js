@@ -19,6 +19,14 @@ export const useStore = () => {
         state.storedTasksList.push(taskToAdd);
     }
 
+    const updateTaskTime = (id, updatedTime) => {
+        state.storedTasksList.forEach(task => {
+            if (task.id === id) {
+                task.totalTimeSpent = updatedTime;
+            }
+        });
+    }
+
     const removeTask = (taskToRemove) => {
         state.storedTasksList = state.storedTasksList.filter(task => task.id !== taskToRemove.id);
         // remove tasks on reload
@@ -70,6 +78,7 @@ export const useStore = () => {
 
     return {
         addTask,
+        updateTaskTime,
         removeTask,
         setActiveTask,
         setStoppedTask,
