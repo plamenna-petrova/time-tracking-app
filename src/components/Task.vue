@@ -67,12 +67,11 @@ export default {
         const taskTotalTime = ref(0);
         const timeSpent = computed(() => { return formatTime(taskTotalTime.value) });
 
-        let increment;
+        let timer;
 
         const deleteTaskFromList = (currentTask) => {
             if (taskTotalTime.value > 0) {
                 if (confirm('Do you really want to remove this task and the time spent on it?')) {
-                    clearInterval(increment);
                     removeTask(currentTask);
                     emit('reduce:total', taskTotalTime.value);
                 } else { 
@@ -108,12 +107,14 @@ export default {
 
         watch(isActive, () => {
             if (isActive.value) {
-                increment = setInterval(() => {
-                  taskTotalTime.value++;
-                  emit('update:total');        
-                }, 1000);
+                timer = new Worker('../timer-worker.js');
+                timer.postMessage({ total: taskTotalTime.value });
+                timer.onmessage = (event) => {
+                    taskTotalTime.value = event.data;
+                    emit('update:total');
+                }
             } else {
-                clearInterval(increment);
+                timer.terminate();
             }
         })
 
