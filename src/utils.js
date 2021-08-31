@@ -22,3 +22,16 @@ export const applyTheme = (theme) => {
         document.body.setAttribute('data-theme', theme);
     }
 }
+
+export const getDate = () => {
+    const date = new Date();
+
+    let dateOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    };
+
+    return date.toLocaleString('en-US', dateOptions);
+}

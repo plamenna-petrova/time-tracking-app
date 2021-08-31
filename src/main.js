@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import ('./index.css');
+import ('./index.css')
+import router from './router'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -10,7 +11,7 @@ if ('serviceWorker' in navigator) {
     runtime.register();
 }
 
-const app = createApp(App);
+const app = createApp(App).use(router);
 
 let escHandler = null;
 let handleOutsideClick = null;
@@ -48,4 +49,4 @@ app.directive('esc', {
 
 app.mount('#app');
 
-// createApp(App).mount('#app')
+// createApp(App).use(router).mount('#app');

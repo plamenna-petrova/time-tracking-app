@@ -1,12 +1,11 @@
 <template>
   <img alt="Vue logo" src="./assets/asbestos-app-icon.jpg">
+  <router-view/>
   <ButtonSwitchTheme />
-  <TasksList />
 </template>
 
 <script>
 import ButtonSwitchTheme from './components/button/ButtonSwitchTheme.vue';
-import TasksList from './components/TasksList.vue'
 
 import { onMounted } from 'vue'
 import { useStore } from './store.js'
@@ -15,20 +14,33 @@ import { applyTheme } from './utils'
 export default {
   name: 'App',
   components: {
-    ButtonSwitchTheme,
-    TasksList
+    ButtonSwitchTheme
   },
   setup() {
-    const { appTheme, deactivateAll, readStateFromLocalStorage } = useStore();
+    const { appTheme, activeTasks, deactivateAll, readStateFromLocalStorage } = useStore();
+
+    const onAppClose = (event) => {
+        if (activeTasks.value && activeTasks.value.length !== 0) {
+          alert(activeTasks.value);
+          console.log(activeTasks.value)
+          event.preventDefault(); // Firefox
+          event.returnValue = ''; // Chrome
+        } else {
+          delete event['returnValue'];
+        }
+    }
 
     onMounted(() => {
-      const app = document.getElementById('app');
-      app.style.opacity = '1';
-      app.style.transition = 'opacity 1.5s ease';
+      const appNode = document.getElementById('app');
+      appNode.style.opacity = '1';
+      appNode.style.transition = 'opacity 1.5s ease';
+
       setTimeout(readStateFromLocalStorage(['appTheme', 'storedTasksList']), 50);
       // in case someone has saved the task list with a running task
       setTimeout(deactivateAll(), 100);
       setTimeout(applyTheme(appTheme.value), 150);
+
+      window.addEventListener('beforeunload', onAppClose);
     })
 
     return {

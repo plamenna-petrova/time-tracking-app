@@ -13,6 +13,7 @@ export const useStore = () => {
     // getters
     const getTasksList = computed(() => state.storedTasksList);
     const getAppTheme = computed(() => state.appTheme);
+    const getActiveTasks = computed(() => state.storedTasksList.filter(task => task.activeTask));
 
     // actions
     const addTask = (taskToAdd) => {
@@ -42,9 +43,14 @@ export const useStore = () => {
     }
 
     const removeTask = (taskToRemove) => {
-        state.storedTasksList = state.storedTasksList.filter(task => task.id !== taskToRemove.id);
-        // remove tasks on reload
-        writeStateToLocalStorage('storedTasksList');
+        // state.storedTasksList = state.storedTasksList.filter(task => task.id !== taskToRemove.id);
+        // writeStateToLocalStorage('storedTasksList');
+        const filtered = (source) => source.filter(task => task.id !== taskToRemove.id);
+        let savedTasks = JSON.parse(localStorage.getItem('storedTasksList'));
+        state.storedTasksList = filtered(state.storedTasksList);
+        if (savedTasks.length > 0) {
+            writeStateToLocalStorage('storedTasksList', filtered(savedTasks));
+        }
     }
 
     const setActiveTask = (taskId) => {
@@ -66,16 +72,17 @@ export const useStore = () => {
         writeStateToLocalStorage('appTheme');
     }
 
-    const writeStateToLocalStorage = (targetKey) => {
+    const writeStateToLocalStorage = (targetKey, update) => {
         if (targetKey) {
-            const currentTarget = targetKey in state ? state[targetKey] : null;
+            // const currentTarget = targetKey in state ? state[targetKey] : null;
+            const currentTarget = update || state[targetKey] || null;
             if (currentTarget) {
                 localStorage.setItem(targetKey, JSON.stringify(currentTarget));
             }
         } else {
             Object.keys(state).map(key => {
                 localStorage.setItem(key, JSON.stringify(state[key]));
-            })
+            });
         }
     }
 
@@ -102,6 +109,7 @@ export const useStore = () => {
         readStateFromLocalStorage,
         writeStateToLocalStorage,
         appTheme: getAppTheme,
-        storedTasksList: getTasksList
-    };
+        storedTasksList: getTasksList,
+        activeTasks: getActiveTasks
+    }
 }

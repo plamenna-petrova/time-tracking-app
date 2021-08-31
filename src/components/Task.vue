@@ -2,9 +2,6 @@
     <div class="d-flex flex-row justify-content-center tasks-to-remove-list m-3 p-3" :class="{ 'active-task-container shadow' : isActive, 'shadow' : !isActive }">
         <div class="d-flex flex-row bg-warning task-name">
             <div class="p-2">
-                <ButtonEditTask class="click-outside-ignore" @click="toggleEdit" />
-            </div>
-            <div class="p-2">
                 <div class="text-dark flex-grow" :class="{ 'font-weight-bold' : isActive }"> Task Name : {{ task.name }} </div>
             </div>
             <div class="p-2">
@@ -25,7 +22,7 @@
             <ButtonDeleteTask buttonTitle="Delete Task" class="btn btn-danger" @click="deleteTaskFromList(task)" />
         </div>
         <div class="update-time">
-            <button class="btn btn-primary" @click="updateTime">Save and update time</button>
+            <button class="btn btn-primary" @click="updateTime">Save time</button>
         </div>
     </div>
 </template>
@@ -39,9 +36,9 @@ import { formatTime } from '../utils.js'
 import ButtonDeleteTask from './button/ButtonDeleteTask.vue'
 import ButtonStop from './button/ButtonStop.vue'
 import ButtonStart from './button/ButtonStart.vue'
-import ButtonEditTask from './button/ButtonEditTask.vue'
-import ButtonSaveEdit from './button/ButtonSaveEdit.vue'
+
 import InputText from './input/InputText.vue'
+import ButtonSaveEdit from './button/ButtonSaveEdit.vue'
 
 export default {
     name: 'Task',
@@ -49,9 +46,8 @@ export default {
         ButtonDeleteTask,
         ButtonStart,
         ButtonStop,
-        ButtonEditTask,
-        ButtonSaveEdit,
-        InputText
+        InputText,
+        ButtonSaveEdit
     },
     props: {
         task: Object
@@ -88,7 +84,6 @@ export default {
         }
 
         const toggleEdit = () => {
-            // console.log(taskToEdit.editing);
             taskToEdit.editing = !taskToEdit.editing;
             return taskToEdit.editing ? taskToEdit.name = props.task.name : ''
         }

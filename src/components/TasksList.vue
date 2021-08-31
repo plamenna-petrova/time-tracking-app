@@ -24,6 +24,9 @@
       </div>
     </div>
   </div>
+  <div v-if="storedTasksList.length > 0">
+    <h4>{{ today }}</h4>
+  </div>   
   <div class="tasks-container" v-if="storedTasksList.length > 0">
     <div class="task-list">
       <transition-group name="task-list-transition">
@@ -47,7 +50,7 @@ import Task from "./Task.vue";
 
 import { computed, reactive, ref } from "vue"
 import { useStore } from "../store.js"
-import { formatTime } from "../utils.js"
+import { formatTime, getDate } from "../utils.js"
 
 export default {
   name: "TasksList",
@@ -66,6 +69,8 @@ export default {
       totalTimeSpent: '',
       activeTask: false,
     });
+
+    const today = getDate();
 
     const totalTime = ref(0);
 
@@ -103,6 +108,7 @@ export default {
       createNewTask,
       storedTasksList,
       newTask,
+      today,
       totalTime,
       totalTimeDisplay,
       updateTotal,

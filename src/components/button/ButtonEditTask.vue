@@ -14,3 +14,17 @@ export default {
   name: 'ButtonEditTask'
 }
 </script>
+
+<style>
+  a {
+    background: white;
+    padding: 5px;
+    text-decoration: none;
+    color: black !important;;
+  }
+
+  a:hover {
+    color: white !important;
+    background: black;
+  }
+</style>
