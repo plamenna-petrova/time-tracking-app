@@ -1,5 +1,10 @@
 <template>
-  <button class="btn btn-outline-dark save-tasks-button" ref="buttonSave" title="Save tasks list" @click="saveCurrentTasksList">
+  <button
+    class="btn btn-outline-dark save-tasks-button"
+    ref="buttonSave"
+    title="Save Tasks List to Local Storage"
+    @click="saveCurrentTasksList"
+  >
     <transition-group name="inner">
       <span
         v-if="buttonState.text"
@@ -37,25 +42,38 @@ import { useStore } from "../../store.js";
 export default {
   name: "ButtonSave",
   setup() {
-    const { writeStateToLocalStorage } = useStore();
+    const { saveTime, storedTasksList, writeStateToLocalStorage } = useStore();
 
     const buttonSave = ref();
 
     const buttonState = reactive({
       enabled: true,
       text: "",
-    })
+    });
 
     const saveCurrentTasksList = () => {
-      writeStateToLocalStorage('storedTasksList');
+      if (saveTime.value) {
+        writeStateToLocalStorage("storedTasksList");
+        writeStateToLocalStorage("tasksListTotal");
+      } else {
+        let copy = JSON.stringify(storedTasksList.value);
+        let template = JSON.parse(copy);
+        template.map((task) => {
+          task.taskTotal = 0;
+          return task;
+        });
+        writeStateToLocalStorage("storedTasksList", template);
+        writeStateToLocalStorage("tasksListTotal", 0);
+      }
+
       buttonSave.value.blur();
 
       buttonState.enabled = false;
-      buttonState.text = "Task list saved &#10003;";
+      buttonState.text = 'Task list saved &#10003;';
 
       setTimeout(() => {
         buttonState.enabled = true;
-        buttonState.text = "";
+        buttonState.text = '';
       }, 3000);
     }
 
@@ -63,12 +81,11 @@ export default {
       buttonSave,
       buttonState,
       saveCurrentTasksList,
-    }
-  }
-}
+    };
+  },
+};
 </script>
 
 
 <style>
-
 </style>

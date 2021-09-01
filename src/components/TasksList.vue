@@ -24,6 +24,9 @@
       </div>
     </div>
   </div>
+  <div v-if="saveTime" class="text-center text-dark">
+    <button class="btn-outline-danger" title="Will save the task list and remove all time tracked in total for individual tasks." @click="resetButtonClick"></button>
+  </div>  
   <div v-if="storedTasksList.length > 0">
     <h4>{{ today }}</h4>
   </div>   
@@ -48,12 +51,12 @@ import ButtonSave from './button/ButtonSave.vue'
 import InputText from "./input/InputText.vue"
 import Task from "./Task.vue";
 
-import { computed, reactive, ref } from "vue"
+import { computed, reactive } from "vue"
 import { useStore } from "../store.js"
 import { formatTime, getDate } from "../utils.js"
 
 export default {
-  name: "TasksList",
+  name: 'TasksList',
   components: {
     ButtonCreateTask,
     ButtonSave,
@@ -61,18 +64,18 @@ export default {
     Task,
   },
   setup() {
-    const { addTask, storedTasksList } = useStore();
+    const { addTask, autoStart, deactivateAll, resetSavedTime, saveTime, setState, storedTasksList, tasksListTotal } = useStore();
 
     const newTask = reactive({
       id: '',
       name: '',
-      totalTimeSpent: '',
       activeTask: false,
+      taskTotal: 0
     });
 
     const today = getDate();
 
-    const totalTime = ref(0);
+    const totalTime = computed(() => tasksListTotal.value);
 
     const totalTimeDisplay = computed(() => {
       return formatTime(totalTime.value);
@@ -84,6 +87,11 @@ export default {
           .toString()
           .substring(1);  
 
+        if (autoStart.value) {
+          deactivateAll();
+          newTask.activeTask = autoStart.value;
+        }  
+
         addTask({ ...newTask });
 
         alert('Task successfully created');
@@ -91,27 +99,33 @@ export default {
         newTask.id = '';
         newTask.name = '';
       } else {
-        alert('Please enter a name of the task');
-        return;
+        return alert('Please enter a name of the task');
       }
-    };
+    }
 
-    const updateTotal = (minutes) => {
-      if (minutes) {
-        totalTime.value = totalTime.value - minutes;
+    const resetButtonClick = () => {
+      if (confirm('This will reset all tracked time and save your task list - are you sure?')) {
+        resetSavedTime();
       } else {
-        totalTime.value++;
+        return
       }
-    };
+    }
+
+    const updateTotal = (minus) => {
+      let calc = minus ? totalTime.value - minus : totalTime.value + 1;
+      return setState('tasksListTotal', calc, false);
+    }
 
     return {
       createNewTask,
       storedTasksList,
       newTask,
+      resetButtonClick,
+      saveTime,
       today,
       totalTime,
       totalTimeDisplay,
-      updateTotal,
+      updateTotal
     }
   },
 };

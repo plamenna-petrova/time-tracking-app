@@ -1,4 +1,3 @@
-
 <template>
   <button class="switch-theme-button btn btn-primary btn-outline-light" ref="switchThemeButton" :title="`Switched to ${buttonTitle}`" @click="switchTheme">
     <svg v-if="appTheme === 'dark'" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sun" width="30" height="30" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -23,7 +22,7 @@ import { applyTheme } from "../../utils.js";
 export default {
   name: "ButtonSwitchTheme",
   setup() {
-    const { appTheme, setAppTheme } = useStore();
+    const { appTheme, setState } = useStore();
 
     const switchThemeButton = ref();
     const buttonTitle = computed(() => {
@@ -31,7 +30,7 @@ export default {
     });
 
     const switchTheme = () => {
-      appTheme.value === 'light' ? setAppTheme('dark') : setAppTheme('light');
+      appTheme.value === 'light' ? setState('appTheme', 'dark', true) : setState('appTheme', 'light', true);
       applyTheme(appTheme.value);
       switchThemeButton.value.blur();
     }

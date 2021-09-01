@@ -1,11 +1,17 @@
 <template>
   <img alt="Vue logo" src="./assets/asbestos-app-icon.jpg">
+  <ButtonSettings />
+  <transition name="modal">
+    <Settings v-if="settingsShown"/>
+  </transition>  
   <router-view/>
   <ButtonSwitchTheme />
 </template>
 
 <script>
 import ButtonSwitchTheme from './components/button/ButtonSwitchTheme.vue';
+import ButtonSettings from './components/button/ButtonSettings.vue'
+import Settings from './components/Settings.vue'
 
 import { onMounted } from 'vue'
 import { useStore } from './store.js'
@@ -14,10 +20,12 @@ import { applyTheme } from './utils'
 export default {
   name: 'App',
   components: {
-    ButtonSwitchTheme
+    ButtonSwitchTheme,
+    ButtonSettings,
+    Settings
   },
   setup() {
-    const { appTheme, activeTasks, deactivateAll, readStateFromLocalStorage } = useStore();
+    const { appTheme, activeTasks, deactivateAll, readStateFromLocalStorage, settingsShown } = useStore();
 
     const onAppClose = (event) => {
         if (activeTasks.value && activeTasks.value.length !== 0) {
@@ -35,8 +43,7 @@ export default {
       appNode.style.opacity = '1';
       appNode.style.transition = 'opacity 1.5s ease';
 
-      setTimeout(readStateFromLocalStorage(['appTheme', 'storedTasksList']), 50);
-      // in case someone has saved the task list with a running task
+      setTimeout(readStateFromLocalStorage(['appTheme', 'autoStart', 'saveTime', 'storedTasksList', 'tasksListTotal']), 50);
       setTimeout(deactivateAll(), 100);
       setTimeout(applyTheme(appTheme.value), 150);
 
@@ -44,7 +51,8 @@ export default {
     })
 
     return {
-      appTheme
+      appTheme,
+      settingsShown
     }
   }
 }

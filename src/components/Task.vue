@@ -5,10 +5,10 @@
                 <div class="text-dark flex-grow" :class="{ 'font-weight-bold' : isActive }"> Task Name : {{ task.name }} </div>
             </div>
             <div class="p-2">
-                <InputText v-model="taskToEdit.name" v-click-outside="toggleEdit" v-esc="toggleEdit" class="flex-grow" @keyup.enter="updateTask"/>
+                <InputText v-model="taskToEdit.name" v-click-outside="toggleEdit" v-esc="toggleEdit" class="flex-grow" @keyup.enter="updateCurrentTask"/>
             </div>
             <div class="p-2">
-                <ButtonSaveEdit @click="updateTask" />
+                <ButtonSaveEdit @click="updateCurrentTask" />
             </div>    
         </div>
         <div class="p-2 bg-info rounded text-dark time-spent"> Time Spent : {{ timeSpent }}</div>
@@ -21,15 +21,12 @@
         <div class="remove-tracked-task">
             <ButtonDeleteTask buttonTitle="Delete Task" class="btn btn-danger" @click="deleteTaskFromList(task)" />
         </div>
-        <div class="update-time">
-            <button class="btn btn-primary" @click="updateTime">Save time</button>
-        </div>
     </div>
 </template>
 
 <script>
 
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, watch } from 'vue'
 import { useStore } from '../store.js'
 import { formatTime } from '../utils.js'
 
@@ -55,7 +52,7 @@ export default {
     emits: ['reduce:total', 'update:total'],
     setup(props, { emit }) {
 
-        const { editTaskName, updateTaskTime, removeTask, setActiveTask, setStoppedTask } = useStore();
+        const { updateTask, removeTask, setActiveTask, setStoppedTask } = useStore();
 
         const isActive = computed(() => props.task.activeTask);
 
@@ -64,16 +61,16 @@ export default {
             name: ''
         });
 
-        const taskTotalTime = ref(0);
-        const timeSpent = computed(() => { return formatTime(taskTotalTime.value) });
+        const taskTotal = computed(() => props.task.taskTotal);
+        const timeSpent = computed(() => { return formatTime(taskTotal.value) });
 
         let timer;
 
         const deleteTaskFromList = (currentTask) => {
-            if (taskTotalTime.value > 0) {
+            if (taskTotal.value > 0) {
                 if (confirm('Do you really want to remove this task and the time spent on it?')) {
                     removeTask(currentTask);
-                    emit('reduce:total', taskTotalTime.value);
+                    emit('reduce:total', taskTotal.value);
                 } else { 
                     return
                 }
@@ -87,18 +84,30 @@ export default {
             return taskToEdit.editing ? taskToEdit.name = props.task.name : ''
         }
 
-        const startTracking = () => {
-            setActiveTask(props.task.id);
-        }
-
         const stopTracking = () => {
             setStoppedTask(props.task.id);
         }
+        
+        const startTimerWorker = () => {
+            timer = new Worker('../timer-worker.js');
+            timer.postMessage({ total: taskTotal.value });
+            timer.onmessage = (event) => {
+                updateTask(props.task.id, 'taskTotal', event.data);
+                emit('update:total');
+            }
+        }
 
-        const updateTask = () => {
+         const startTracking = () => {
+            setActiveTask(props.task.id);
+        }
+
+        const stopTimerWorker = () => {
+            timer.terminate();
+        }
+
+        const updateCurrentTask = () => {
             if (taskToEdit.name) {
-                editTaskName(props.task.id, taskToEdit.name);
-                // toggleEdit();
+                updateTask(props.task.id, 'name', taskToEdit.name);
             } else {
                 alert('Please enter a task name!');
                 return
@@ -107,25 +116,17 @@ export default {
 
         watch(isActive, () => {
             if (isActive.value) {
-                timer = new Worker('../timer-worker.js');
-                timer.postMessage({ total: taskTotalTime.value });
-                timer.onmessage = (event) => {
-                    taskTotalTime.value = event.data;
-                    emit('update:total');
-                }
+                startTimerWorker();
             } else {
-                timer.terminate();
+                stopTimerWorker();
             }
         })
 
-        const updateTime = () => {
-            if (props.task.name) {
-                updateTaskTime(props.task.id, timeSpent);
-            } else {
-                alert('Error');
-                return
+        onMounted(() => {
+            if (isActive.value) {
+                startTimerWorker();
             }
-        }
+        })
 
         return {
             isActive,
@@ -135,8 +136,7 @@ export default {
             stopTracking,
             startTracking,
             timeSpent,
-            updateTask,
-            updateTime
+            updateCurrentTask
         }
     }
 }
