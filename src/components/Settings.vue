@@ -82,4 +82,10 @@ export default {
 </script>
 
 <style>
+  .settings {
+    border: 2px solid red;
+    border-radius: 20px;
+    background-color: grey;
+    width: calc(100% - 4rem);
+  }
 </style>

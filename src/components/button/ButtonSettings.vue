@@ -1,5 +1,10 @@
 <template>
-  <button class="button-settings" ref="settingsButton" title="App Settings" @click="showSettings">
+  <button
+    class="button-settings btn btn-danger btn-outline-light"
+    ref="settingsButton"
+    title="App Settings"
+    @click="showSettings"
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="icon icon-tabler icon-tabler-settings"
@@ -26,7 +31,7 @@ import { ref } from "vue";
 import { useStore } from "../../store.js";
 
 export default {
-  name: 'ButtonSettings',
+  name: "ButtonSettings",
   setup() {
     const { toggleSettings } = useStore();
 
@@ -35,12 +40,19 @@ export default {
     const showSettings = () => {
       toggleSettings();
       settingsButton.value.blur();
-    };
+    }
 
     return {
       settingsButton,
-      showSettings,
-    };
+      showSettings
+    }
   },
 }
 </script>
+
+<style>
+.button-settings {
+  position: absolute;
+  right: 20px;
+}
+</style>

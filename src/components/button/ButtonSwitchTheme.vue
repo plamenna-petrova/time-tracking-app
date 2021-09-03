@@ -20,7 +20,7 @@ import { useStore } from "../../store.js";
 import { applyTheme } from "../../utils.js";
 
 export default {
-  name: "ButtonSwitchTheme",
+  name: 'ButtonSwitchTheme',
   setup() {
     const { appTheme, setState } = useStore();
 
@@ -49,6 +49,6 @@ export default {
     .switch-theme-button {
         position: absolute;
         bottom: 40px;
-        right: 20px;
+        left: 20px;
     }
 </style>

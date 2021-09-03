@@ -76,7 +76,9 @@ export const useStore = () => {
         writeStateToLocalStorage('tasksListTotal');
     }
 
-    const toggleSettings = () => { state.showSettings = !state.showSettings }
+    const toggleSettings = () => {
+        state.showSettings = !state.showSettings
+    }
 
     const updateTask = (id, key, value) => {
         state.storedTasksList.forEach(task => {
