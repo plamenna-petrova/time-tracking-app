@@ -37,6 +37,7 @@
         <p>
            Adjust settings through clicking on the checkboxes. 
         </p>
+        <Settings />
         <button
           class="
             btn btn-light btn-outline-danger
@@ -67,14 +68,19 @@
   </div>
 </template>
 
-
 <script>
+
+import Settings from './Settings.vue'
+
 export default {
   data() {
     return {
       showModal: false,
-    };
+    }
   },
+  components: {
+      Settings
+  }
 };
 </script>
 
